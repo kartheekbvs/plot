@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataViz Academy - Master Matplotlib & Seaborn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #f7fafc 0%, #e2e8f0 50%, #cbd5e0 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 10s ease-in-out infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .learning-node {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .learning-node:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            transform-origin: 50% 50%;
+        }
+        
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(24px);
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #4299e1;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .code-snippet {
+            background: #1e293b;
+            color: #e2e8f0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .visualization-card {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .visualization-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+        
+        .visualization-card img {
+            transition: transform 0.3s ease;
+        }
+        
+        .visualization-card:hover img {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-chart-line text-white text-sm"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900">DataViz Academy</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="nav-link text-gray-700 hover:text-blue-600 font-medium">Dashboard</a>
+                    <a href="matplotlib.html" class="nav-link text-gray-700 hover:text-blue-600 font-medium">Matplotlib</a>
+                    <a href="seaborn.html" class="nav-link text-gray-700 hover:text-blue-600 font-medium">Seaborn</a>
+                    <a href="practice.html" class="nav-link text-gray-700 hover:text-blue-600 font-medium">Practice</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-fire text-green-600 text-sm"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700">7 day streak</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-8">
+                    <div class="space-y-4">
+                        <h1 class="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                            Master <span class="text-blue-600">Data Visualization</span> with Python
+                        </h1>
+                        <p class="text-xl text-gray-600 leading-relaxed">
+                            From basic plots to advanced statistical visualizations. Learn matplotlib and seaborn through interactive tutorials, hands-on practice, and real-world examples.
+                        </p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
+                            Start Learning
+                        </button>
+                        <button class="border-2 border-gray-300 hover:border-blue-600 text-gray-700 hover:text-blue-600 px-8 py-4 rounded-lg font-semibold transition-all duration-300">
+                            View Examples
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-8 text-sm text-gray-600">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-users text-blue-600"></i>
+                            <span>10,000+ learners</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-code text-green-600"></i>
+                            <span>50+ tutorials</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-chart-bar text-purple-600"></i>
+                            <span>100+ examples</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <img src="resources/hero-main.png" alt="Data Visualization Hero" class="w-full h-auto rounded-2xl shadow-2xl">
+                    <div class="absolute -bottom-6 -right-6 glass-card rounded-xl p-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-gray-900">85%</div>
+                            <div class="text-sm text-gray-600">Complete</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Learning Dashboard -->
+    <section class="py-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Your Learning Journey</h2>
+                <p class="text-lg text-gray-600">Track your progress and discover new visualization techniques</p>
+            </div>
+            
+            <!-- Progress Overview -->
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <div class="glass-card rounded-xl p-6 text-center">
+                    <div class="relative w-24 h-24 mx-auto mb-4">
+                        <svg class="progress-ring w-24 h-24">
+                            <circle cx="48" cy="48" r="40" stroke="#e5e7eb" stroke-width="8" fill="transparent"/>
+                            <circle cx="48" cy="48" r="40" stroke="#3b82f6" stroke-width="8" fill="transparent"
+                                    stroke-dasharray="251.2" stroke-dashoffset="62.8" class="progress-ring-circle"/>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-2xl font-bold text-gray-900">75%</span>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Matplotlib Mastery</h3>
+                    <p class="text-gray-600">12 of 16 topics completed</p>
+                </div>
+                
+                <div class="glass-card rounded-xl p-6 text-center">
+                    <div class="relative w-24 h-24 mx-auto mb-4">
+                        <svg class="progress-ring w-24 h-24">
+                            <circle cx="48" cy="48" r="40" stroke="#e5e7eb" stroke-width="8" fill="transparent"/>
+                            <circle cx="48" cy="48" r="40" stroke="#10b981" stroke-width="8" fill="transparent"
+                                    stroke-dasharray="251.2" stroke-dashoffset="100.48" class="progress-ring-circle"/>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-2xl font-bold text-gray-900">60%</span>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Seaborn Advanced</h3>
+                    <p class="text-gray-600">9 of 15 topics completed</p>
+                </div>
+                
+                <div class="glass-card rounded-xl p-6 text-center">
+                    <div class="relative w-24 h-24 mx-auto mb-4">
+                        <svg class="progress-ring w-24 h-24">
+                            <circle cx="48" cy="48" r="40" stroke="#e5e7eb" stroke-width="8" fill="transparent"/>
+                            <circle cx="48" cy="48" r="40" stroke="#f59e0b" stroke-width="8" fill="transparent"
+                                    stroke-dasharray="251.2" stroke-dashoffset="175.84" class="progress-ring-circle"/>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-2xl font-bold text-gray-900">30%</span>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Practice Challenges</h3>
+                    <p class="text-gray-600">15 of 50 challenges solved</p>
+                </div>
+            </div>
+
+            <!-- Learning Path -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold text-gray-900 mb-8 text-center">Interactive Learning Tree</h3>
+                <div class="relative">
+                    <!-- Connection Lines -->
+                    <svg class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 1;">
+                        <path d="M 25% 30% Q 35% 25% 50% 30%" stroke="#cbd5e0" stroke-width="2" fill="none"/>
+                        <path d="M 50% 30% Q 65% 25% 75% 30%" stroke="#cbd5e0" stroke-width="2" fill="none"/>
+                        <path d="M 25% 70% Q 35% 75% 50% 70%" stroke="#cbd5e0" stroke-width="2" fill="none"/>
+                        <path d="M 50% 70% Q 65% 75% 75% 70%" stroke="#cbd5e0" stroke-width="2" fill="none"/>
+                    </svg>
+                    
+                    <div class="grid md:grid-cols-4 gap-6 relative" style="z-index: 2;">
+                        <div class="learning-node glass-card rounded-xl p-6 text-center" onclick="window.location.href='matplotlib.html'">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-chart-line text-blue-600 text-xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Basic Plots</h4>
+                            <p class="text-sm text-gray-600 mb-3">Line charts, scatter plots, bar charts</p>
+                            <div class="text-xs text-blue-600 font-medium">● ● ● ○ ○</div>
+                        </div>
+                        
+                        <div class="learning-node glass-card rounded-xl p-6 text-center" onclick="window.location.href='matplotlib.html#customization'">
+                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-palette text-green-600 text-xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Customization</h4>
+                            <p class="text-sm text-gray-600 mb-3">Colors, styles, labels, legends</p>
+                            <div class="text-xs text-green-600 font-medium">● ● ● ● ○</div>
+                        </div>
+                        
+                        <div class="learning-node glass-card rounded-xl p-6 text-center" onclick="window.location.href='seaborn.html'">
+                            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-chart-area text-purple-600 text-xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Seaborn Stats</h4>
+                            <p class="text-sm text-gray-600 mb-3">Statistical plots and relationships</p>
+                            <div class="text-xs text-purple-600 font-medium">● ● ○ ○ ○</div>
+                        </div>
+                        
+                        <div class="learning-node glass-card rounded-xl p-6 text-center" onclick="window.location.href='practice.html'">
+                            <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-code text-orange-600 text-xl"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Advanced</h4>
+                            <p class="text-sm text-gray-600 mb-3">Complex visualizations and techniques</p>
+                            <div class="text-xs text-orange-600 font-medium">● ○ ○ ○ ○</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visualization Gallery -->
+    <section class="py-16 bg-white px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Featured Visualizations</h2>
+                <p class="text-lg text-gray-600">Explore beautiful examples and learn by doing</p>
+            </div>
+            
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <button class="filter-btn bg-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-all duration-300" data-filter="all">
+                    All Examples
+                </button>
+                <button class="filter-btn bg-gray-200 text-gray-700 hover:bg-gray-300 px-6 py-2 rounded-lg font-medium transition-all duration-300" data-filter="matplotlib">
+                    Matplotlib
+                </button>
+                <button class="filter-btn bg-gray-200 text-gray-700 hover:bg-gray-300 px-6 py-2 rounded-lg font-medium transition-all duration-300" data-filter="seaborn">
+                    Seaborn
+                </button>
+                <button class="filter-btn bg-gray-200 text-gray-700 hover:bg-gray-300 px-6 py-2 rounded-lg font-medium transition-all duration-300" data-filter="advanced">
+                    Advanced
+                </button>
+            </div>
+            
+            <!-- Gallery Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="gallery-grid">
+                <div class="visualization-card glass-card rounded-xl overflow-hidden" data-category="matplotlib">
+                    <img src="resources/matplotlib-concept.png" alt="Line Plot Examples" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Matplotlib</span>
+                            <span class="text-xs text-gray-500">Beginner</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Line Plots & Customization</h3>
+                        <p class="text-gray-600 text-sm mb-4">Learn to create beautiful line plots with custom styling, markers, and annotations.</p>
+                        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-all duration-300">
+                            Try This Example
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="visualization-card glass-card rounded-xl overflow-hidden" data-category="seaborn">
+                    <img src="resources/seaborn-concept.png" alt="Statistical Plots" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium text-purple-600 bg-purple-100 px-2 py-1 rounded">Seaborn</span>
+                            <span class="text-xs text-gray-500">Intermediate</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Statistical Relationships</h3>
+                        <p class="text-gray-600 text-sm mb-4">Explore correlation matrices, regression plots, and distribution analysis.</p>
+                        <button class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-medium transition-all duration-300">
+                            Try This Example
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="visualization-card glass-card rounded-xl overflow-hidden" data-category="matplotlib">
+                    <img src="resources/matplotlib-concept.png" alt="3D Plotting" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Matplotlib</span>
+                            <span class="text-xs text-gray-500">Advanced</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">3D Visualizations</h3>
+                        <p class="text-gray-600 text-sm mb-4">Create stunning 3D plots, surface plots, and interactive visualizations.</p>
+                        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-all duration-300">
+                            Try This Example
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="visualization-card glass-card rounded-xl overflow-hidden" data-category="seaborn">
+                    <img src="resources/seaborn-concept.png" alt="Heatmaps" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium text-purple-600 bg-purple-100 px-2 py-1 rounded">Seaborn</span>
+                            <span class="text-xs text-gray-500">Intermediate</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Heatmaps & Clustering</h3>
+                        <p class="text-gray-600 text-sm mb-4">Master heatmap creation and hierarchical clustering visualization.</p>
+                        <button class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-medium transition-all duration-300">
+                            Try This Example
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="visualization-card glass-card rounded-xl overflow-hidden" data-category="advanced">
+                    <img src="resources/hero-main.png" alt="Interactive Dashboards" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium text-orange-600 bg-orange-100 px-2 py-1 rounded">Advanced</span>
+                            <span class="text-xs text-gray-500">Expert</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Interactive Dashboards</h3>
+                        <p class="text-gray-600 text-sm mb-4">Build complex interactive dashboards with multiple coordinated views.</p>
+                        <button class="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 rounded-lg font-medium transition-all duration-300">
+                            Try This Example
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="visualization-card glass-card rounded-xl overflow-hidden" data-category="matplotlib">
+                    <img src="resources/matplotlib-concept.png" alt="Animation" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">Matplotlib</span>
+                            <span class="text-xs text-gray-500">Advanced</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Animated Plots</h3>
+                        <p class="text-gray-600 text-sm mb-4">Create dynamic animations and time-series visualizations.</p>
+                        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition-all duration-300">
+                            Try This Example
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Guide -->
+    <section class="py-16 bg-gray-50 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Quick Start Guide</h2>
+                <p class="text-lg text-gray-600">Get started with data visualization in just a few lines of code</p>
+            </div>
+            
+            <div class="glass-card rounded-xl p-8">
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Your First Plot</h3>
+                        <div class="code-snippet rounded-lg p-4 text-sm">
+                            <div class="text-gray-400 mb-2"># Import libraries</div>
+                            <div class="text-blue-400">import</div> <span class="text-white">matplotlib.pyplot</span> <span class="text-blue-400">as</span> <span class="text-white">plt</span><br>
+                            <div class="text-blue-400">import</div> <span class="text-white">numpy</span> <span class="text-blue-400">as</span> <span class="text-white">np</span><br><br>
+                            <div class="text-gray-400 mb-2"># Create data</div>
+                            <span class="text-white">x = np.linspace(0, 10, 100)</span><br>
+                            <span class="text-white">y = np.sin(x)</span><br><br>
+                            <div class="text-gray-400 mb-2"># Create plot</div>
+                            <span class="text-white">plt.figure(figsize=(8, 6))</span><br>
+                            <span class="text-white">plt.plot(x, y, label='sin(x)', color='blue')</span><br>
+                            <span class="text-white">plt.title('Sine Wave')</span><br>
+                            <span class="text-white">plt.xlabel('x')</span><br>
+                            <span class="text-white">plt.ylabel('y')</span><br>
+                            <span class="text-white">plt.legend()</span><br>
+                            <span class="text-white">plt.show()</span>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-white rounded-lg p-8 shadow-lg">
+                            <div id="quick-start-chart" class="w-full h-64"></div>
+                            <p class="text-sm text-gray-600 mt-4">Interactive result preview</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-chart-line text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold">DataViz Academy</span>
+            </div>
+            <p class="text-gray-400 mb-8">Master data visualization with interactive tutorials and hands-on practice</p>
+            <div class="border-t border-gray-800 pt-8">
+                <p class="text-gray-500 text-sm">© 2025 DataViz Academy. Built with passion for data science education.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

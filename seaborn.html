@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seaborn Mastery - DataViz Academy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        
+        .code-editor {
+            background: #1e293b;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .code-header {
+            background: #334155;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .code-content {
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+        
+        .run-button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .run-button:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+        
+        .output-container {
+            background: white;
+            border: 2px dashed #e5e7eb;
+            border-radius: 8px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tutorial-section {
+            scroll-margin-top: 100px;
+        }
+        
+        .sidebar-nav {
+            position: sticky;
+            top: 100px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+        
+        .nav-item {
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .nav-item:hover {
+            background: #f3f4f6;
+            transform: translateX(4px);
+        }
+        
+        .nav-item.active {
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-weight: 600;
+        }
+        
+        .concept-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .concept-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .statistical-concept {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(24px);
+        }
+        
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+        }
+        
+        .color-swatch {
+            height: 40px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .color-swatch:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-chart-line text-white text-sm"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900">DataViz Academy</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Dashboard</a>
+                    <a href="matplotlib.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Matplotlib</a>
+                    <a href="#" class="text-purple-600 font-semibold">Seaborn</a>
+                    <a href="practice.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Practice</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-fire text-green-600 text-sm"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700">7 day streak</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <section class="pt-24 pb-12 bg-gradient-to-br from-purple-50 to-pink-100 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center">
+                <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                    Master <span class="text-purple-600">Seaborn</span>
+                </h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Statistical data visualization made beautiful. Learn seaborn's high-level interface 
+                    for creating informative and attractive statistical graphics.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid lg:grid-cols-4 gap-8">
+            <!-- Sidebar Navigation -->
+            <div class="lg:col-span-1">
+                <div class="sidebar-nav bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Tutorial Contents</h3>
+                    <nav class="space-y-2">
+                        <div class="nav-item active" data-section="introduction">
+                            <i class="fas fa-play-circle text-purple-600 mr-2"></i>
+                            Introduction
+                        </div>
+                        <div class="nav-item" data-section="statistical-relationships">
+                            <i class="fas fa-project-diagram text-blue-600 mr-2"></i>
+                            Statistical Relationships
+                        </div>
+                        <div class="nav-item" data-section="categorical-data">
+                            <i class="fas fa-chart-bar text-green-600 mr-2"></i>
+                            Categorical Data
+                        </div>
+                        <div class="nav-item" data-section="distributions">
+                            <i class="fas fa-chart-area text-orange-600 mr-2"></i>
+                            Distributions
+                        </div>
+                        <div class="nav-item" data-section="regression">
+                            <i class="fas fa-chart-line text-red-600 mr-2"></i>
+                            Regression Analysis
+                        </div>
+                        <div class="nav-item" data-section="multi-plot">
+                            <i class="fas fa-th-large text-indigo-600 mr-2"></i>
+                            Multi-plot Grids
+                        </div>
+                        <div class="nav-item" data-section="styling">
+                            <i class="fas fa-palette text-pink-600 mr-2"></i>
+                            Styling & Themes
+                        </div>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="lg:col-span-3 space-y-12">
+                <!-- Introduction Section -->
+                <section id="introduction" class="tutorial-section fade-in-up">
+                    <div class="bg-white rounded-xl shadow-sm p-8">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Introduction to Seaborn</h2>
+                        
+                        <div class="prose max-w-none mb-8">
+                            <p class="text-lg text-gray-600 leading-relaxed mb-6">
+                                Seaborn is a Python data visualization library based on matplotlib that provides 
+                                a high-level interface for drawing attractive and informative statistical graphics. 
+                                It makes complex visualizations simple and beautiful.
+                            </p>
+                            
+                            <div class="bg-purple-50 border-l-4 border-purple-600 p-6 rounded-r-lg mb-6">
+                                <h3 class="text-lg font-semibold text-purple-900 mb-2">Why Seaborn?</h3>
+                                <ul class="text-purple-800 space-y-1">
+                                    <li>• Beautiful default styles and color palettes</li>
+                                    <li>• Built-in statistical estimation and plotting</li>
+                                    <li>• Tight integration with pandas DataFrames</li>
+                                    <li>• High-level functions for complex visualizations</li>
+                                    <li>• Automatic legend and annotation handling</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 mb-4">Your First Seaborn Plot</h3>
+                                <div class="code-editor">
+                                    <div class="code-header">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                            <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                        </div>
+                                        <button class="run-button" onclick="runSeabornCode('introduction')">
+                                            <i class="fas fa-play mr-1"></i>Run Code
+                                        </button>
+                                    </div>
+                                    <div class="code-content">
+<pre><code class="language-python">import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Set the style
+sns.set_style("whitegrid")
+
+# Load sample dataset
+tips = sns.load_dataset('tips')
+
+# Create a scatter plot
+plt.figure(figsize=(10, 6))
+sns.scatterplot(data=tips, x='total_bill', y='tip', 
+                hue='time', size='size', alpha=0.7)
+
+plt.title('Tips vs Total Bill', fontsize=16, fontweight='bold')
+plt.show()</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 mb-4">Output</h3>
+                                <div class="output-container" id="introduction-output">
+                                    <div class="text-center text-gray-500">
+                                        <i class="fas fa-chart-scatter text-4xl mb-2"></i>
+                                        <p>Click "Run Code" to see the output</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Statistical Relationships Section -->
+                <section id="statistical-relationships" class="tutorial-section fade-in-up">
+                    <div class="bg-white rounded-xl shadow-sm p-8">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Statistical Relationships</h2>
+                        
+                        <div class="statistical-concept p-8 rounded-xl mb-8">
+                            <h3 class="text-2xl font-bold mb-4">Understanding relplot()</h3>
+                            <p class="text-purple-100 mb-6">
+                                The relplot() function is seaborn's primary tool for visualizing statistical relationships 
+                                between variables. It can create both scatter plots and line plots with semantic mapping.
+                            </p>
+                            
+                            <div class="grid md:grid-cols-3 gap-6">
+                                <div class="bg-white/20 p-4 rounded-lg">
+                                    <h4 class="font-semibold mb-2">Scatter Plots</h4>
+                                    <p class="text-sm">Show relationships between continuous variables</p>
+                                </div>
+                                <div class="bg-white/20 p-4 rounded-lg">
+                                    <h4 class="font-semibold mb-2">Line Plots</h4>
+                                    <p class="text-sm">Show trends over time or continuous variables</p>
+                                </div>
+                                <div class="bg-white/20 p-4 rounded-lg">
+                                    <h4 class="font-semibold mb-2">Semantic Mapping</h4>
+                                    <p class="text-sm">Use hue, size, and style to add dimensions</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Example Tabs -->
+                        <div class="mb-8">
+                            <div class="flex space-x-4 mb-6">
+                                <button class="tab-button bg-purple-600 text-white px-4 py-2 rounded-lg font-medium" data-tab="scatter-rel">
+                                    Scatter Plot
+                                </button>
+                                <button class="tab-button bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium" data-tab="line-rel">
+                                    Line Plot
+                                </button>
+                                <button class="tab-button bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium" data-tab="advanced-rel">
+                                    Advanced
+                                </button>
+                            </div>
+                            
+                            <div class="tab-content">
+                                <div class="tab-panel active" data-panel="scatter-rel">
+                                    <div class="grid md:grid-cols-2 gap-8">
+                                        <div>
+                                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Scatter Plot with Multiple Dimensions</h3>
+                                            <div class="code-editor">
+                                                <div class="code-header">
+                                                    <button class="run-button" onclick="runSeabornCode('scatter-relationship')">
+                                                        <i class="fas fa-play mr-1"></i>Run
+                                                    </button>
+                                                </div>
+                                                <div class="code-content">
+<pre><code class="language-python">import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Load dataset
+tips = sns.load_dataset('tips')
+
+# Create advanced scatter plot
+plt.figure(figsize=(12, 8))
+sns.relplot(x='total_bill', y='tip', data=tips,
+            hue='time',           # Color by time (Lunch/Dinner)
+            size='size',          # Size by party size
+            style='smoker',       # Different markers for smoker
+            alpha=0.8,            # Transparency
+            height=6,             # Figure height
+            aspect=1.5)           # Aspect ratio
+
+plt.suptitle('Tips Analysis: Multiple Dimensions', 
+             fontsize=16, fontweight='bold', y=1.02)
+plt.show()</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="output-container" id="scatter-relationship-output">
+                                                <div class="text-center text-gray-500">
+                                                    <i class="fas fa-project-diagram text-4xl mb-2"></i>
+                                                    <p>Click "Run" to see the scatter plot</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="tab-panel hidden" data-panel="line-rel">
+                                    <div class="grid md:grid-cols-2 gap-8">
+                                        <div>
+                                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Time Series with Line Plot</h3>
+                                            <div class="code-editor">
+                                                <div class="code-header">
+                                                    <button class="run-button" onclick="runSeabornCode('line-relationship')">
+                                                        <i class="fas fa-play mr-1"></i>Run
+                                                    </button>
+                                                </div>
+                                                <div class="code-content">
+<pre><code class="language-python">import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load flights dataset
+flights = sns.load_dataset('flights')
+
+# Convert to wide format for better visualization
+flights_wide = flights.pivot('year', 'month', 'passengers')
+
+# Create line plot
+plt.figure(figsize=(14, 8))
+sns.relplot(x='year', y='passengers', 
+            hue='month', kind='line', 
+            data=flights, height=6, aspect=2,
+            palette='viridis', linewidth=2)
+
+plt.title('Airline Passengers by Month (1949-1960)', 
+          fontsize=16, fontweight='bold')
+plt.xlabel('Year', fontsize=12)
+plt.ylabel('Number of Passengers', fontsize=12)
+plt.show()</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="output-container" id="line-relationship-output">
+                                                <div class="text-center text-gray-500">
+                                                    <i class="fas fa-chart-line text-4xl mb-2"></i>
+                                                    <p>Click "Run" to see the line plot</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="tab-panel hidden" data-panel="advanced-rel">
+                                    <div class="grid md:grid-cols-2 gap-8">
+                                        <div>
+                                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Faceted Relationships</h3>
+                                            <div class="code-editor">
+                                                <div class="code-header">
+                                                    <button class="run-button" onclick="runSeabornCode('advanced-relationship')">
+                                                        <i class="fas fa-play mr-1"></i>Run
+                                                    </button>
+                                                </div>
+                                                <div class="code-content">
+<pre><code class="language-python">import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load iris dataset
+iris = sns.load_dataset('iris')
+
+# Create faceted scatter plot
+plt.figure(figsize=(14, 10))
+g = sns.relplot(x='sepal_length', y='petal_length', 
+                hue='species', size='petal_width',
+                data=iris, height=8, aspect=1.2,
+                kind='scatter', alpha=0.8)
+
+# Add regression line for each species
+for species in iris['species'].unique():
+    subset = iris[iris['species'] == species]
+    sns.regplot(x='sepal_length', y='petal_length', 
+                data=subset, scatter=False, 
+                ax=g.ax, label=f'{species} trend')
+
+plt.title('Iris Flower Measurements: Species Comparison', 
+          fontsize=16, fontweight='bold')
+plt.show()</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="output-container" id="advanced-relationship-output">
+                                                <div class="text-center text-gray-500">
+                                                    <i class="fas fa-search text-4xl mb-2"></i>
+                                                    <p>Click "Run" to see the advanced plot</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Categorical Data Section -->
+                <section id="categorical-data" class="tutorial-section fade-in-up">
+                    <div class="bg-white rounded-xl shadow-sm p-8">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Categorical Data Visualization</h2>
+                        
+                        <div class="prose max-w-none mb-8">
+                            <p class="text-lg text-gray-600 leading-relaxed">
+                                Seaborn's categorical plotting functions help you understand how variables differ 
+                                across different categories. These plots are essential for comparing groups and 
+                                understanding categorical relationships.
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-8 mb-8">
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-semibold text-gray-900">Categorical Plot Types</h3>
+                                <div class="space-y-3">
+                                    <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-600">
+                                        <h4 class="font-semibold text-blue-900">Strip Plot</h4>
+                                        <p class="text-sm text-blue-800">Shows distribution of values with scattered points</p>
+                                    </div>
+                                    <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-600">
+                                        <h4 class="font-semibold text-green-900">Swarm Plot</h4>
+                                        <p class="text-sm text-green-800">Avoids overlapping points with smart positioning</p>
+                                    </div>
+                                    <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-600">
+                                        <h4 class="font-semibold text-purple-900">Box Plot</h4>
+                                        <p class="text-sm text-purple-800">Shows quartiles, median, and outliers</p>
+                                    </div>
+                                    <div class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-600">
+                                        <h4 class="font-semibold text-orange-900">Violin Plot</h4>
+                                        <p class="text-sm text-orange-800">Combines box plot with kernel density estimation</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-semibold text-gray-900">When to Use Each</h3>
+                                <div class="space-y-3 text-sm text-gray-600">
+                                    <div class="flex items-start">
+                                        <i class="fas fa-check text-green-600 mt-1 mr-2"></i>
+                                        <span><strong>Strip/Swarm:</strong> Small datasets, show individual points</span>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <i class="fas fa-check text-green-600 mt-1 mr-2"></i>
+                                        <span><strong>Box/Violin:</strong> Large datasets, show distribution summary</span>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <i class="fas fa-check text-green-600 mt-1 mr-2"></i>
+                                        <span><strong>Bar/Point:</strong> Show estimates and confidence intervals</span>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <i class="fas fa-check text-green-600 mt-1 mr-2"></i>
+                                        <span><strong>Count:</strong> Show frequency of categories</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Categorical Comparison</h3>
+                                <div class="code-editor">
+                                    <div class="code-header">
+                                        <button class="run-button" onclick="runSeabornCode('categorical-comparison')">
+                                            <i class="fas fa-play mr-1"></i>Run
+                                        </button>
+                                    </div>
+                                    <div class="code-content">
+<pre><code class="language-python">import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load tips dataset
+tips = sns.load_dataset('tips')
+
+# Create figure with multiple categorical plots
+fig, axes = plt.subplots(2, 2, figsize=(15, 12))
+
+# 1. Strip plot
+sns.stripplot(x='day', y='total_bill', data=tips, 
+              ax=axes[0,0], alpha=0.7, jitter=True)
+axes[0,0].set_title('Strip Plot: Daily Bills', fontweight='bold')
+
+# 2. Box plot
+sns.boxplot(x='day', y='total_bill', data=tips, ax=axes[0,1])
+axes[0,1].set_title('Box Plot: Daily Bill Distribution', fontweight='bold')
+
+# 3. Violin plot with split by smoker
+sns.violinplot(x='day', y='total_bill', hue='smoker', 
+               data=tips, ax=axes[1,0], split=True)
+axes[1,0].set_title('Violin Plot: Smoker vs Non-Smoker', fontweight='bold')
+
+# 4. Bar plot with confidence intervals
+sns.barplot(x='day', y='tip', data=tips, ax=axes[1,1], 
+            ci='sd', capsize=0.1)
+axes[1,1].set_title('Bar Plot: Average Tips by Day', fontweight='bold')
+
+plt.tight_layout()
+plt.show()</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="output-container" id="categorical-comparison-output">
+                                    <div class="text-center text-gray-500">
+                                        <i class="fas fa-chart-bar text-4xl mb-2"></i>
+                                        <p>Click "Run" to see categorical plots</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Distributions Section -->
+                <section id="distributions" class="tutorial-section fade-in-up">
+                    <div class="bg-white rounded-xl shadow-sm p-8">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Distribution Analysis</h2>
+                        
+                        <div class="prose max-w-none mb-8">
+                            <p class="text-lg text-gray-600 leading-relaxed">
+                                Understanding the distribution of your data is crucial for statistical analysis. 
+                                Seaborn provides powerful tools for visualizing univariate and bivariate distributions.
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-6 mb-8">
+                            <div class="concept-card bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg">
+                                <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
+                                    <i class="fas fa-chart-area text-white text-xl"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Univariate</h3>
+                                <p class="text-gray-600 text-sm">Single variable distributions</p>
+                                <div class="mt-3 text-xs text-blue-600">
+                                    <div>• distplot(), histplot()</div>
+                                    <div>• kdeplot(), rugplot()</div>
+                                </div>
+                            </div>
+                            
+                            <div class="concept-card bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg">
+                                <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-4">
+                                    <i class="fas fa-chart-scatter text-white text-xl"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Bivariate</h3>
+                                <p class="text-gray-600 text-sm">Two variable joint distributions</p>
+                                <div class="mt-3 text-xs text-green-600">
+                                    <div>• jointplot(), hexplot()</div>
+                                    <div>• kdeplot(), pairplot()</div>
+                                </div>
+                            </div>
+                            
+                            <div class="concept-card bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg">
+                                <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-4">
+                                    <i class="fas fa-th text-white text-xl"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Multivariate</h3>
+                                <p class="text-gray-600 text-sm">Multiple variable relationships</p>
+                                <div class="mt-3 text-xs text-purple-600">
+                                    <div>• pairplot(), heatmap()</div>
+                                    <div>• FacetGrid(), PairGrid()</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Distribution Comparison</h3>
+                                <div class="code-editor">
+                                    <div class="code-header">
+                                        <button class="run-button" onclick="runSeabornCode('distributions')">
+                                            <i class="fas fa-play mr-1"></i>Run
+                                        </button>
+                                    </div>
+                                    <div class="code-content">
+<pre><code class="language-python">import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load iris dataset
+iris = sns.load_dataset('iris')
+
+# Create distribution plots
+fig, axes = plt.subplots(2, 2, figsize=(15, 12))
+
+# 1. Histogram with KDE
+sns.histplot(iris['sepal_length'], kde=True, ax=axes[0,0], 
+             color='skyblue', bins=20)
+axes[0,0].set_title('Sepal Length Distribution', fontweight='bold')
+
+# 2. Multiple histograms
+sns.histplot(data=iris, x='sepal_length', hue='species', 
+             ax=axes[0,1], alpha=0.7, bins=15)
+axes[0,1].set_title('Sepal Length by Species', fontweight='bold')
+
+# 3. Joint distribution
+sns.scatterplot(data=iris, x='sepal_length', y='petal_length',
+                hue='species', ax=axes[1,0], alpha=0.8)
+axes[1,0].set_title('Sepal vs Petal Length', fontweight='bold')
+
+# 4. Pair plot preview (2 variables)
+sns.scatterplot(data=iris, x='sepal_width', y='petal_width',
+                hue='species', ax=axes[1,1], alpha=0.8)
+axes[1,1].set_title('Sepal vs Petal Width', fontweight='bold')
+
+plt.tight_layout()
+plt.show()</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="output-container" id="distributions-output">
+                                    <div class="text-center text-gray-500">
+                                        <i class="fas fa-chart-area text-4xl mb-2"></i>
+                                        <p>Click "Run" to see distribution plots</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Regression Section -->
+                <section id="regression" class="tutorial-section fade-in-up">
+                    <div class="bg-white rounded-xl shadow-sm p-8">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Regression Analysis</h2>
+                        
+                        <div class="prose max-w-none mb-8">
+                            <p class="text-lg text-gray-600 leading-relaxed">
+                                Seaborn makes it easy to add regression lines to your scatter plots, helping you 
+                                understand linear relationships and make predictions. The library provides both 
+                                simple and advanced regression modeling capabilities.
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-8 mb-8">
+                            <div class="bg-red-50 border-l-4 border-red-600 p-6 rounded-r-lg">
+                                <h3 class="text-lg font-semibold text-red-900 mb-3">Regression Functions</h3>
+                                <div class="space-y-2 text-red-800">
+                                    <div><strong>regplot():</strong> Simple regression with scatter plot</div>
+                                    <div><strong>lmplot():</strong> Regression with faceting support</div>
+                                    <div><strong>residplot():</strong> Residuals analysis</div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-50 border-l-4 border-blue-600 p-6 rounded-r-lg">
+                                <h3 class="text-lg font-semibold text-blue-900 mb-3">Key Features</h3>
+                                <div class="space-y-2 text-blue-800">
+                                    <div>• Automatic confidence intervals</div>
+                                    <div>• Multiple regression model types</div>
+                                    <div>• Outlier detection and handling</div>
+                                    <div>• Residual analysis tools</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Multiple Regression Models</h3>
+                                <div class="code-editor">
+                                    <div class="code-header">
+                                        <button class="run-button" onclick="runSeabornCode('regression')">
+                                            <i class="fas fa-play mr-1"></i>Run
+                                        </button>
+                                    </div>
+                                    <div class="code-content">
+<pre><code class="language-python">import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load tips dataset
+tips = sns.load_dataset('tips')
+
+# Create regression analysis
+fig, axes = plt.subplots(2, 2, figsize=(15, 12))
+
+# 1. Simple linear regression
+sns.regplot(x='total_bill', y='tip', data=tips, 
+            ax=axes[0,0], scatter_kws={'alpha':0.6})
+axes[0,0].set_title('Linear Regression: Bill vs Tip', fontweight='bold')
+
+# 2. Polynomial regression
+sns.regplot(x='total_bill', y='tip', data=tips, 
+            ax=axes[0,1], order=2, scatter_kws={'alpha':0.6},
+            line_kws={'color': 'red', 'label': 'Polynomial'})
+axes[0,1].set_title('Polynomial Regression (Order 2)', fontweight='bold')
+
+# 3. Regression with hue
+sns.scatterplot(x='total_bill', y='tip', hue='time', 
+                data=tips, ax=axes[1,0], alpha=0.7)
+
+# Add separate regression lines
+for time in tips['time'].unique():
+    subset = tips[tips['time'] == time]
+    sns.regplot(x='total_bill', y='tip', data=subset, 
+                ax=axes[1,0], scatter=False, 
+                label=f'{time} trend')
+
+axes[1,0].set_title('Separate Regressions by Time', fontweight='bold')
+
+# 4. Residuals plot
+sns.residplot(x='total_bill', y='tip', data=tips, 
+              ax=axes[1,1], scatter_kws={'alpha':0.6})
+axes[1,1].set_title('Residuals Plot', fontweight='bold')
+axes[1,1].axhline(y=0, color='red', linestyle='--')
+
+plt.tight_layout()
+plt.show()</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="output-container" id="regression-output">
+                                    <div class="text-center text-gray-500">
+                                        <i class="fas fa-chart-line text-4xl mb-2"></i>
+                                        <p>Click "Run" to see regression plots</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Multi-plot Grids Section -->
+                <section id="multi-plot" class="tutorial-section fade-in-up">
+                    <div class="bg-white rounded-xl shadow-sm p-8">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Multi-plot Grids</h2>
+                        
+                        <div class="prose max-w-none mb-8">
+                            <p class="text-lg text-gray-600 leading-relaxed">
+                                Seaborn's grid functions (FacetGrid, PairGrid, JointGrid) allow you to create 
+                                complex multi-plot layouts that reveal patterns across multiple variables and 
+                                subsets of your data.
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-8 mb-8">
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-semibold text-gray-900">Grid Types</h3>
+                                <div class="space-y-3">
+                                    <div class="bg-indigo-50 p-4 rounded-lg border-l-4 border-indigo-600">
+                                        <h4 class="font-semibold text-indigo-900">FacetGrid</h4>
+                                        <p class="text-sm text-indigo-800">Create grids of plots based on categorical variables</p>
+                                    </div>
+                                    <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-600">
+                                        <h4 class="font-semibold text-purple-900">PairGrid</h4>
+                                        <p class="text-sm text-purple-800">Show pairwise relationships in a matrix</p>
+                                    </div>
+                                    <div class="bg-pink-50 p-4 rounded-lg border-l-4 border-pink-600">
+                                        <h4 class="font-semibold text-pink-900">JointGrid</h4>
+                                        <p class="text-sm text-pink-800">Combine marginal and joint distributions</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-semibold text-gray-900">Use Cases</h3>
+                                <div class="space-y-3 text-sm text-gray-600">
+                                    <div class="flex items-start">
+                                        <i class="fas fa-check text-green-600 mt-1 mr-2"></i>
+                                        <span>Compare groups across multiple variables</span>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <i class="fas fa-check text-green-600 mt-1 mr-2"></i>
+                                        <span>Explore high-dimensional relationships</span>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <i class="fas fa-check text-green-600 mt-1 mr-2"></i>
+                                        <span>Create publication-ready figure grids</span>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <i class="fas fa-check text-green-600 mt-1 mr-2"></i>
+                                        <span>Reveal patterns in complex datasets</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">FacetGrid Example</h3>
+                                <div class="code-editor">
+                                    <div class="code-header">
+                                        <button class="run-button" onclick="runSeabornCode('facetgrid')">
+                                            <i class="fas fa-play mr-1"></i>Run
+                                        </button>
+                                    </div>
+                                    <div class="code-content">
+<pre><code class="language-python">import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load iris dataset
+iris = sns.load_dataset('iris')
+
+# Create FacetGrid
+g = sns.FacetGrid(iris, col='species', hue='species', 
+                  height=4, aspect=1.2)
+
+# Map scatter plot to each facet
+g.map(sns.scatterplot, 'sepal_length', 'petal_length', 
+      alpha=0.8, s=60)
+
+# Add regression line to each facet
+g.map(sns.regplot, 'sepal_length', 'petal_length', 
+      scatter=False, truncate=True)
+
+# Customize
+fig = g.fig 
+fig.suptitle('Iris Species: Sepal vs Petal Length', 
+             fontsize=16, fontweight='bold', y=1.02)
+
+# Add overall legend
+g.add_legend()
+
+plt.tight_layout()
+plt.show()</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="output-container" id="facetgrid-output">
+                                    <div class="text-center text-gray-500">
+                                        <i class="fas fa-th text-4xl mb-2"></i>
+                                        <p>Click "Run" to see the facet grid</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Styling Section -->
+                <section id="styling" class="tutorial-section fade-in-up">
+                    <div class="bg-white rounded-xl shadow-sm p-8">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Styling & Themes</h2>
+                        
+                        <div class="prose max-w-none mb-8">
+                            <p class="text-lg text-gray-600 leading-relaxed">
+                                Seaborn provides beautiful default styles and extensive customization options. 
+                                Master the art of creating visually appealing and publication-ready statistical plots.
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-8 mb-8">
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-semibold text-gray-900">Built-in Themes</h3>
+                                <div class="space-y-2">
+                                    <div class="bg-gray-100 p-3 rounded">
+                                        <strong>darkgrid:</strong> Dark background with grid
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded">
+                                        <strong>whitegrid:</strong> White background with grid
+                                    </div>
+                                    <div class="bg-white p-3 rounded border">
+                                        <strong>dark:</strong> Dark background, no grid
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded">
+                                        <strong>white:</strong> White background, no grid
+                                    </div>
+                                    <div class="bg-gray-100 p-3 rounded">
+                                        <strong>ticks:</strong> White background with ticks
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <h3 class="text-xl font-semibold text-gray-900">Color Palettes</h3>
+                                <div class="palette-grid">
+                                    <div class="color-swatch" style="background: #1f77b4;">Blues</div>
+                                    <div class="color-swatch" style="background: #ff7f0e;">Oranges</div>
+                                    <div class="color-swatch" style="background: #2ca02c;">Greens</div>
+                                    <div class="color-swatch" style="background: #d62728;">Reds</div>
+                                    <div class="color-swatch" style="background: #9467bd;">Purples</div>
+                                    <div class="color-swatch" style="background: #8c564b;">Browns</div>
+                                    <div class="color-swatch" style="background: #e377c2;">Pinks</div>
+                                    <div class="color-swatch" style="background: #7f7f7f;">Grays</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Complete Styling Example</h3>
+                                <div class="code-editor">
+                                    <div class="code-header">
+                                        <button class="run-button" onclick="runSeabornCode('styling')">
+                                            <i class="fas fa-play mr-1"></i>Run
+                                        </button>
+                                    </div>
+                                    <div class="code-content">
+<pre><code class="language-python">import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Set custom style
+sns.set_style("whitegrid", {
+    'grid.color': '.8',
+    'grid.linewidth': 0.5,
+    'axes.edgecolor': '.8',
+    'axes.linewidth': 0.8
+})
+
+# Custom color palette
+custom_palette = sns.color_palette("Set2")
+sns.set_palette(custom_palette)
+
+# Load dataset
+tips = sns.load_dataset('tips')
+
+# Create styled plot
+plt.figure(figsize=(12, 8))
+
+# Main plot with custom styling
+ax = sns.scatterplot(data=tips, x='total_bill', y='tip', 
+                     hue='time', size='size', alpha=0.8,
+                     edgecolor='white', linewidth=1)
+
+# Add regression line
+sns.regplot(data=tips, x='total_bill', y='tip', 
+            scatter=False, ax=ax, color='red', 
+            line_kws={'linewidth': 2, 'alpha': 0.8})
+
+# Styling
+plt.title('Elegant Seaborn Styling Example', 
+          fontsize=18, fontweight='bold', 
+          fontfamily='serif', pad=20)
+
+plt.xlabel('Total Bill ($)', fontsize=14, fontweight='bold')
+plt.ylabel('Tip ($)', fontsize=14, fontweight='bold')
+
+# Customize legend
+plt.legend(title='Time of Day', title_fontsize=12, 
+           fontsize=11, frameon=True, fancybox=True, 
+           shadow=True, loc='upper left')
+
+# Add subtle background color
+ax.set_facecolor('#fafafa')
+
+plt.tight_layout()
+plt.show()</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="output-container" id="styling-output">
+                                    <div class="text-center text-gray-500">
+                                        <i class="fas fa-palette text-4xl mb-2"></i>
+                                        <p>Click "Run" to see styled plot</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-chart-line text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold">DataViz Academy</span>
+            </div>
+            <p class="text-gray-400 mb-8">Master data visualization with interactive tutorials and hands-on practice</p>
+            <div class="border-t border-gray-800 pt-8">
+                <p class="text-gray-500 text-sm">© 2025 DataViz Academy. Built with passion for data science education.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        // Tab functionality for seaborn page
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabName = button.dataset.tab;
+                    
+                    // Update button styles
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('bg-purple-600', 'text-white');
+                        btn.classList.add('bg-gray-200', 'text-gray-700');
+                    });
+                    
+                    button.classList.remove('bg-gray-200', 'text-gray-700');
+                    button.classList.add('bg-purple-600', 'text-white');
+                    
+                    // Update panels
+                    tabPanels.forEach(panel => {
+                        panel.classList.add('hidden');
+                        panel.classList.remove('active');
+                    });
+                    
+                    const activePanel = document.querySelector(`[data-panel="${tabName}"]`);
+                    if (activePanel) {
+                        activePanel.classList.remove('hidden');
+                        activePanel.classList.add('active');
+                    }
+                });
+            });
+            
+            // Sidebar navigation
+            const navItems = document.querySelectorAll('.nav-item');
+            const sections = document.querySelectorAll('.tutorial-section');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const sectionName = item.dataset.section;
+                    
+                    // Update navigation
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    item.classList.add('active');
+                    
+                    // Scroll to section
+                    const section = document.getElementById(sectionName);
+                    if (section) {
+                        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+            
+            // Scroll-based navigation highlighting
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 150;
+                    if (window.pageYOffset >= sectionTop) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.section === current) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+        });
+        
+        // Seaborn code execution function
+        function runSeabornCode(exampleId) {
+            const outputContainer = document.getElementById(`${exampleId}-output`);
+            if (!outputContainer) return;
+            
+            // Show loading state
+            outputContainer.innerHTML = `
+                <div class="text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+                    <p class="text-purple-600">Generating seaborn visualization...</p>
+                </div>
+            `;
+            
+            // Simulate code execution with delay
+            setTimeout(() => {
+                // Create different chart types based on example
+                let chartContent = '';
+                
+                switch(exampleId) {
+                    case 'introduction':
+                        chartContent = createSeabornIntroduction();
+                        break;
+                    case 'scatter-relationship':
+                        chartContent = createScatterRelationship();
+                        break;
+                    case 'line-relationship':
+                        chartContent = createLineRelationship();
+                        break;
+                    case 'advanced-relationship':
+                        chartContent = createAdvancedRelationship();
+                        break;
+                    case 'categorical-comparison':
+                        chartContent = createCategoricalComparison();
+                        break;
+                    case 'distributions':
+                        chartContent = createDistributionPlots();
+                        break;
+                    case 'regression':
+                        chartContent = createRegressionPlots();
+                        break;
+                    case 'facetgrid':
+                        chartContent = createFacetGrid();
+                        break;
+                    case 'styling':
+                        chartContent = createStyledPlot();
+                        break;
+                    default:
+                        chartContent = '<div class="text-center text-gray-500">Example not implemented yet</div>';
+                }
+                
+                outputContainer.innerHTML = chartContent;
+                
+                // Initialize ECharts if needed
+                const chartElement = outputContainer.querySelector('.chart-container');
+                if (chartElement) {
+                    initializeSeabornChart(chartElement, exampleId);
+                }
+            }, 1500);
+        }
+        
+        // Chart creation functions for seaborn examples
+        function createSeabornIntroduction() {
+            return `
+                <div class="chart-container w-full h-full" data-chart="seaborn-intro"></div>
+            `;
+        }
+        
+        function createScatterRelationship() {
+            return `
+                <div class="chart-container w-full h-full" data-chart="scatter-rel"></div>
+            `;
+        }
+        
+        function createLineRelationship() {
+            return `
+                <div class="chart-container w-full h-full" data-chart="line-rel"></div>
+            `;
+        }
+        
+        function createAdvancedRelationship() {
+            return `
+                <div class="chart-container w-full h-full" data-chart="advanced-rel"></div>
+            `;
+        }
+        
+        function createCategoricalComparison() {
+            return `
+                <div class="chart-container w-full h-full" data-chart="categorical"></div>
+            `;
+        }
+        
+        function createDistributionPlots() {
+            return `
+                <div class="chart-container w-full h-full" data-chart="distributions"></div>
+            `;
+        }
+        
+        function createRegressionPlots() {
+            return `
+                <div class="chart-container w-full h-full" data-chart="regression"></div>
+            `;
+        }
+        
+        function createFacetGrid() {
+            return `
+                <div class="chart-container w-full h-full" data-chart="facetgrid"></div>
+            `;
+        }
+        
+        function createStyledPlot() {
+            return `
+                <div class="chart-container w-full h-full" data-chart="styled-seaborn"></div>
+            `;
+        }
+        
+        // Initialize ECharts for seaborn examples
+        function initializeSeabornChart(container, chartType) {
+            const chart = echarts.init(container);
+            
+            let option = {};
+            
+            switch(chartType) {
+                case 'seaborn-intro':
+                    // Simulate seaborn scatter plot
+                    const scatterData = [];
+                    for (let i = 0; i < 50; i++) {
+                        scatterData.push([
+                            Math.random() * 50 + 10,  // total_bill
+                            Math.random() * 10 + 1,   // tip
+                            Math.random() > 0.5 ? 'Dinner' : 'Lunch',  // time
+                            Math.random() * 4 + 1     // size
+                        ]);
+                    }
+                    
+                    option = {
+                        grid: { left: '10%', right: '10%', top: '15%', bottom: '15%' },
+                        xAxis: { 
+                            type: 'value', 
+                            name: 'Total Bill ($)',
+                            nameLocation: 'middle',
+                            nameGap: 30
+                        },
+                        yAxis: { 
+                            type: 'value', 
+                            name: 'Tip ($)',
+                            nameLocation: 'middle',
+                            nameGap: 30
+                        },
+                        series: [
+                            {
+                                name: 'Dinner',
+                                type: 'scatter',
+                                data: scatterData.filter(d => d[2] === 'Dinner').map(d => [d[0], d[1]]),
+                                itemStyle: { color: '#1f77b4' },
+                                symbolSize: function(data) { return data[1] * 3; }
+                            },
+                            {
+                                name: 'Lunch',
+                                type: 'scatter',
+                                data: scatterData.filter(d => d[2] === 'Lunch').map(d => [d[0], d[1]]),
+                                itemStyle: { color: '#ff7f0e' },
+                                symbolSize: function(data) { return data[1] * 3; }
+                            }
+                        ],
+                        legend: { data: ['Dinner', 'Lunch'] },
+                        title: { text: 'Tips vs Total Bill', left: 'center' }
+                    };
+                    break;
+                    
+                case 'scatter-rel':
+                    // Simulate advanced scatter plot
+                    option = {
+                        grid: { left: '10%', right: '10%', top: '15%', bottom: '15%' },
+                        xAxis: { 
+                            type: 'value', 
+                            name: 'Sepal Length',
+                            nameLocation: 'middle',
+                            nameGap: 30
+                        },
+                        yAxis: { 
+                            type: 'value', 
+                            name: 'Petal Length',
+                            nameLocation: 'middle',
+                            nameGap: 30
+                        },
+                        series: [
+                            {
+                                name: 'setosa',
+                                type: 'scatter',
+                                data: [[5.1, 1.4], [4.9, 1.4], [4.7, 1.3], [4.6, 1.5], [5.0, 1.4]],
+                                itemStyle: { color: '#1f77b4' }
+                            },
+                            {
+                                name: 'versicolor',
+                                type: 'scatter',
+                                data: [[7.0, 4.7], [6.4, 4.5], [6.9, 4.9], [5.5, 4.0], [6.5, 4.6]],
+                                itemStyle: { color: '#ff7f0e' }
+                            },
+                            {
+                                name: 'virginica',
+                                type: 'scatter',
+                                data: [[6.3, 6.0], [5.8, 5.1], [7.1, 5.9], [6.3, 5.6], [6.5, 5.8]],
+                                itemStyle: { color: '#2ca02c' }
+                            }
+                        ],
+                        legend: { data: ['setosa', 'versicolor', 'virginica'] },
+                        title: { text: 'Iris Species Comparison', left: 'center' }
+                    };
+                    break;
+                    
+                // Add more chart types as needed
+                default:
+                    option = {
+                        title: { text: 'Seaborn Chart Preview', left: 'center' }
+                    };
+            }
+            
+            chart.setOption(option);
+            
+            // Responsive resize
+            window.addEventListener('resize', () => {
+                chart.resize();
+            });
+        }
+    </script>
+</body>
+</html>

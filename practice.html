@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Challenges - DataViz Academy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        
+        .code-editor {
+            background: #1e293b;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 400px;
+        }
+        
+        .code-header {
+            background: #334155;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .code-content {
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+            height: calc(100% - 50px);
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #e2e8f0;
+            resize: none;
+        }
+        
+        .run-button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .run-button:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+        
+        .run-button:disabled {
+            background: #6b7280;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .output-container {
+            background: white;
+            border: 2px dashed #e5e7eb;
+            border-radius: 8px;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .challenge-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .challenge-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: #3b82f6;
+        }
+        
+        .challenge-card.active {
+            border-color: #1d4ed8;
+            background: #eff6ff;
+        }
+        
+        .difficulty-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .difficulty-easy {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .difficulty-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .difficulty-hard {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .progress-bar {
+            background: #e5e7eb;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        .hint-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+        }
+        
+        .solution-box {
+            background: #dcfce7;
+            border-left: 4px solid #10b981;
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+        }
+        
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(24px);
+        }
+        
+        .typing-animation {
+            border-right: 2px solid #3b82f6;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { border-color: transparent; }
+            51%, 100% { border-color: #3b82f6; }
+        }
+        
+        .success-animation {
+            animation: successPulse 0.6s ease-out;
+        }
+        
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-chart-line text-white text-sm"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900">DataViz Academy</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Dashboard</a>
+                    <a href="matplotlib.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Matplotlib</a>
+                    <a href="seaborn.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">Seaborn</a>
+                    <a href="#" class="text-green-600 font-semibold">Practice</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-fire text-green-600 text-sm"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700">7 day streak</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <section class="pt-24 pb-12 bg-gradient-to-br from-green-50 to-emerald-100 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center">
+                <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                    Practice <span class="text-green-600">Challenges</span>
+                </h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Test your data visualization skills with hands-on coding challenges. 
+                    From basic plots to complex statistical analysis.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Progress Overview -->
+    <section class="py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Overall Progress</h3>
+                        <span class="text-2xl font-bold text-blue-600">30%</span>
+                    </div>
+                    <div class="progress-bar mb-4">
+                        <div class="progress-fill" style="width: 30%"></div>
+                    </div>
+                    <p class="text-sm text-gray-600">15 of 50 challenges completed</p>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Current Streak</h3>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-fire text-orange-500 text-xl"></i>
+                            <span class="text-2xl font-bold text-orange-600">7</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">Keep it up! Practice daily to maintain your streak.</p>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Skill Level</h3>
+                        <span class="text-2xl font-bold text-purple-600">Intermediate</span>
+                    </div>
+                    <div class="flex space-x-2">
+                        <div class="w-3 h-3 bg-blue-600 rounded-full"></div>
+                        <div class="w-3 h-3 bg-blue-600 rounded-full"></div>
+                        <div class="w-3 h-3 bg-blue-600 rounded-full"></div>
+                        <div class="w-3 h-3 bg-gray-300 rounded-full"></div>
+                        <div class="w-3 h-3 bg-gray-300 rounded-full"></div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">3 out of 5 skill levels mastered</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Challenge Selection -->
+    <section class="py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-4 gap-8">
+                <!-- Challenge List -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-xl shadow-sm p-6 sticky top-24">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Choose Challenge</h3>
+                        <div class="space-y-3" id="challenge-list">
+                            <div class="challenge-card active bg-white p-4 rounded-lg shadow-sm" data-challenge="basic-line">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-semibold text-gray-900">Basic Line Plot</h4>
+                                    <span class="difficulty-badge difficulty-easy">Easy</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Create your first line plot with matplotlib</p>
+                                <div class="mt-2 flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <span>5 min</span>
+                                    <span class="mx-2">•</span>
+                                    <i class="fas fa-check-circle text-green-600 mr-1"></i>
+                                    <span>Completed</span>
+                                </div>
+                            </div>
+                            
+                            <div class="challenge-card bg-white p-4 rounded-lg shadow-sm" data-challenge="scatter-plot">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-semibold text-gray-900">Scatter Plot</h4>
+                                    <span class="difficulty-badge difficulty-easy">Easy</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Visualize relationships between variables</p>
+                                <div class="mt-2 flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <span>8 min</span>
+                                    <span class="mx-2">•</span>
+                                    <i class="fas fa-check-circle text-green-600 mr-1"></i>
+                                    <span>Completed</span>
+                                </div>
+                            </div>
+                            
+                            <div class="challenge-card bg-white p-4 rounded-lg shadow-sm" data-challenge="bar-chart">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-semibold text-gray-900">Bar Chart</h4>
+                                    <span class="difficulty-badge difficulty-medium">Medium</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Compare categorical data with styling</p>
+                                <div class="mt-2 flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <span>12 min</span>
+                                    <span class="mx-2">•</span>
+                                    <i class="fas fa-circle text-gray-400 mr-1"></i>
+                                    <span>Not Started</span>
+                                </div>
+                            </div>
+                            
+                            <div class="challenge-card bg-white p-4 rounded-lg shadow-sm" data-challenge="subplots">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-semibold text-gray-900">Subplot Layout</h4>
+                                    <span class="difficulty-badge difficulty-medium">Medium</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Create multiple plots in one figure</p>
+                                <div class="mt-2 flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <span>15 min</span>
+                                    <span class="mx-2">•</span>
+                                    <i class="fas fa-circle text-gray-400 mr-1"></i>
+                                    <span>Not Started</span>
+                                </div>
+                            </div>
+                            
+                            <div class="challenge-card bg-white p-4 rounded-lg shadow-sm" data-challenge="seaborn-rel">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-semibold text-gray-900">Seaborn Relationships</h4>
+                                    <span class="difficulty-badge difficulty-medium">Medium</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Use relplot for statistical relationships</p>
+                                <div class="mt-2 flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <span>18 min</span>
+                                    <span class="mx-2">•</span>
+                                    <i class="fas fa-circle text-gray-400 mr-1"></i>
+                                    <span>Not Started</span>
+                                </div>
+                            </div>
+                            
+                            <div class="challenge-card bg-white p-4 rounded-lg shadow-sm" data-challenge="heatmap">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-semibold text-gray-900">Correlation Heatmap</h4>
+                                    <span class="difficulty-badge difficulty-hard">Hard</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Create a correlation matrix heatmap</p>
+                                <div class="mt-2 flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <span>25 min</span>
+                                    <span class="mx-2">•</span>
+                                    <i class="fas fa-circle text-gray-400 mr-1"></i>
+                                    <span>Not Started</span>
+                                </div>
+                            </div>
+                            
+                            <div class="challenge-card bg-white p-4 rounded-lg shadow-sm" data-challenge="advanced-viz">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-semibold text-gray-900">Advanced Visualization</h4>
+                                    <span class="difficulty-badge difficulty-hard">Hard</span>
+                                </div>
+                                <p class="text-sm text-gray-600">Complex multi-dimensional visualization</p>
+                                <div class="mt-2 flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <span>30 min</span>
+                                    <span class="mx-2">•</span>
+                                    <i class="fas fa-circle text-gray-400 mr-1"></i>
+                                    <span>Not Started</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Challenge Content -->
+                <div class="lg:col-span-3">
+                    <div class="bg-white rounded-xl shadow-sm p-8">
+                        <!-- Challenge Header -->
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-2xl font-bold text-gray-900" id="challenge-title">
+                                    Basic Line Plot
+                                </h2>
+                                <div class="flex items-center space-x-4">
+                                    <span class="difficulty-badge difficulty-easy">Easy</span>
+                                    <button class="text-gray-500 hover:text-gray-700" onclick="toggleHint()">
+                                        <i class="fas fa-lightbulb mr-1"></i>
+                                        Hint
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="text-gray-600" id="challenge-description">
+                                Create a simple line plot showing the relationship between x and y values. 
+                                Use matplotlib to plot y = x² for x values from 0 to 10.
+                            </p>
+                        </div>
+
+                        <!-- Hint Box -->
+                        <div class="hint-box hidden" id="hint-box">
+                            <h4 class="font-semibold text-amber-900 mb-2">
+                                <i class="fas fa-lightbulb mr-2"></i>Hint
+                            </h4>
+                            <p class="text-amber-800 text-sm" id="hint-text">
+                                Remember to import matplotlib.pyplot as plt and use plt.plot() to create the line plot. 
+                                You can create x values using numpy's linspace or range function.
+                            </p>
+                        </div>
+
+                        <!-- Code Editor and Output -->
+                        <div class="grid lg:grid-cols-2 gap-8">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">Your Code</h3>
+                                    <div class="flex items-center space-x-2">
+                                        <button class="text-gray-500 hover:text-gray-700 text-sm" onclick="resetCode()">
+                                            <i class="fas fa-undo mr-1"></i>Reset
+                                        </button>
+                                        <button class="run-button" onclick="runChallengeCode()" id="run-button">
+                                            <i class="fas fa-play mr-2"></i>Run Code
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="code-editor">
+                                    <div class="code-header">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                            <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                        </div>
+                                        <span class="text-xs text-gray-400">Python</span>
+                                    </div>
+                                    <textarea class="code-content" id="code-input" placeholder="# Write your code here...">
+# Import required libraries
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Create x values from 0 to 10
+x = np.linspace(0, 10, 100)
+
+# Calculate y values (y = x^2)
+y = x**2
+
+# Create the plot
+plt.figure(figsize=(8, 6))
+plt.plot(x, y, 'b-', linewidth=2, label='y = x²')
+
+# Add labels and title
+plt.xlabel('x values')
+plt.ylabel('y values')
+plt.title('Line Plot: y = x²')
+plt.grid(True, alpha=0.3)
+plt.legend()
+
+# Show the plot
+plt.show()
+                                    </textarea>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">Output</h3>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm text-gray-500">Expected Output:</span>
+                                        <button class="text-blue-600 hover:text-blue-800 text-sm" onclick="showSolution()">
+                                            <i class="fas fa-eye mr-1"></i>Show Solution
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="output-container" id="challenge-output">
+                                    <div class="text-center text-gray-500">
+                                        <i class="fas fa-chart-line text-4xl mb-2"></i>
+                                        <p>Click "Run Code" to see your output</p>
+                                        <p class="text-sm mt-2">Your plot will appear here</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Solution Box -->
+                        <div class="solution-box hidden" id="solution-box">
+                            <h4 class="font-semibold text-green-900 mb-2">
+                                <i class="fas fa-check-circle mr-2"></i>Solution
+                            </h4>
+                            <div class="code-editor mt-4">
+                                <div class="code-content text-sm" id="solution-code">
+                                    <pre><code class="language-python"># Complete solution
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Create x values from 0 to 10
+x = np.linspace(0, 10, 100)
+
+# Calculate y values (y = x^2)
+y = x**2
+
+# Create the plot
+plt.figure(figsize=(8, 6))
+plt.plot(x, y, 'b-', linewidth=2, label='y = x²')
+
+# Add labels and title
+plt.xlabel('x values')
+plt.ylabel('y values')
+plt.title('Line Plot: y = x²')
+plt.grid(True, alpha=0.3)
+plt.legend()
+
+# Show the plot
+plt.show()</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Challenge Navigation -->
+                        <div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
+                            <button class="text-gray-500 hover:text-gray-700 font-medium" onclick="previousChallenge()">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                Previous Challenge
+                            </button>
+                            
+                            <div class="flex items-center space-x-4">
+                                <button class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold" onclick="markComplete()">
+                                    <i class="fas fa-check mr-2"></i>
+                                    Mark Complete
+                                </button>
+                                <button class="text-blue-600 hover:text-blue-700 font-medium" onclick="nextChallenge()">
+                                    Next Challenge
+                                    <i class="fas fa-arrow-right ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-chart-line text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold">DataViz Academy</span>
+            </div>
+            <p class="text-gray-400 mb-8">Master data visualization with interactive tutorials and hands-on practice</p>
+            <div class="border-t border-gray-800 pt-8">
+                <p class="text-gray-500 text-sm">© 2025 DataViz Academy. Built with passion for data science education.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        // Challenge data
+        const challenges = {
+            'basic-line': {
+                title: 'Basic Line Plot',
+                description: 'Create a simple line plot showing the relationship between x and y values. Use matplotlib to plot y = x² for x values from 0 to 10.',
+                difficulty: 'easy',
+                hint: 'Remember to import matplotlib.pyplot as plt and use plt.plot() to create the line plot. You can create x values using numpy\'s linspace or range function.',
+                solution: `import matplotlib.pyplot as plt
+import numpy as np
+
+# Create x values from 0 to 10
+x = np.linspace(0, 10, 100)
+
+# Calculate y values (y = x^2)
+y = x**2
+
+# Create the plot
+plt.figure(figsize=(8, 6))
+plt.plot(x, y, 'b-', linewidth=2, label='y = x²')
+
+# Add labels and title
+plt.xlabel('x values')
+plt.ylabel('y values')
+plt.title('Line Plot: y = x²')
+plt.grid(True, alpha=0.3)
+plt.legend()
+
+# Show the plot
+plt.show()`,
+                starterCode: `# Import required libraries
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Create x values from 0 to 10
+x = np.linspace(0, 10, 100)
+
+# Calculate y values (y = x^2)
+y = x**2
+
+# Create the plot
+plt.figure(figsize=(8, 6))
+plt.plot(x, y, 'b-', linewidth=2, label='y = x²')
+
+# Add labels and title
+plt.xlabel('x values')
+plt.ylabel('y values')
+plt.title('Line Plot: y = x²')
+plt.grid(True, alpha=0.3)
+plt.legend()
+
+# Show the plot
+plt.show()`
+            },
+            'scatter-plot': {
+                title: 'Scatter Plot',
+                description: 'Create a scatter plot showing the relationship between two variables. Use random data to demonstrate correlation patterns.',
+                difficulty: 'easy',
+                hint: 'Use numpy to generate random data and matplotlib\'s scatter function. Consider adding labels and a trend line.',
+                solution: `import matplotlib.pyplot as plt
+import numpy as np
+
+# Generate random data
+np.random.seed(42)
+x = np.random.randn(100)
+y = 2 * x + np.random.randn(100) * 0.5
+
+# Create scatter plot
+plt.figure(figsize=(10, 6))
+plt.scatter(x, y, alpha=0.6, color='blue', s=50)
+
+# Add trend line
+z = np.polyfit(x, y, 1)
+p = np.poly1d(z)
+plt.plot(x, p(x), "r--", alpha=0.8, linewidth=2, label='Trend line')
+
+# Add labels and title
+plt.xlabel('X Values')
+plt.ylabel('Y Values')
+plt.title('Scatter Plot with Trend Line')
+plt.grid(True, alpha=0.3)
+plt.legend()
+
+plt.show()`,
+                starterCode: `# Import required libraries
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Generate random data
+np.random.seed(42)
+x = np.random.randn(100)
+y = 2 * x + np.random.randn(100) * 0.5
+
+# Create scatter plot
+plt.figure(figsize=(10, 6))
+plt.scatter(x, y, alpha=0.6, color='blue', s=50)
+
+# Add trend line
+z = np.polyfit(x, y, 1)
+p = np.poly1d(z)
+plt.plot(x, p(x), "r--", alpha=0.8, linewidth=2, label='Trend line')
+
+# Add labels and title
+plt.xlabel('X Values')
+plt.ylabel('Y Values')
+plt.title('Scatter Plot with Trend Line')
+plt.grid(True, alpha=0.3)
+plt.legend()
+
+plt.show()`
+            },
+            'bar-chart': {
+                title: 'Styled Bar Chart',
+                description: 'Create a bar chart comparing different categories with custom styling, colors, and annotations.',
+                difficulty: 'medium',
+                hint: 'Use plt.bar() and customize with colors, labels, and grid. Consider adding value labels on top of bars.',
+                solution: `import matplotlib.pyplot as plt
+import numpy as np
+
+# Data
+categories = ['Python', 'JavaScript', 'Java', 'C++', 'Go']
+values = [85, 72, 68, 55, 45]
+colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']
+
+# Create bar chart
+plt.figure(figsize=(10, 6))
+bars = plt.bar(categories, values, color=colors, alpha=0.8, edgecolor='black', linewidth=1)
+
+# Add value labels on bars
+for bar, value in zip(bars, values):
+    height = bar.get_height()
+    plt.text(bar.get_x() + bar.get_width()/2., height + 1,
+             f'{value}%', ha='center', va='bottom', fontweight='bold')
+
+# Customize
+plt.xlabel('Programming Languages', fontweight='bold')
+plt.ylabel('Popularity (%)', fontweight='bold')
+plt.title('Programming Language Popularity Survey', fontsize=16, fontweight='bold')
+plt.ylim(0, 100)
+plt.grid(True, alpha=0.3, axis='y')
+
+# Add styling
+plt.gca().spines['top'].set_visible(False)
+plt.gca().spines['right'].set_visible(False)
+
+plt.tight_layout()
+plt.show()`,
+                starterCode: `# Import required libraries
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Data
+categories = ['Python', 'JavaScript', 'Java', 'C++', 'Go']
+values = [85, 72, 68, 55, 45]
+colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']
+
+# Create bar chart
+plt.figure(figsize=(10, 6))
+bars = plt.bar(categories, values, color=colors, alpha=0.8, edgecolor='black', linewidth=1)
+
+# Add value labels on bars
+for bar, value in zip(bars, values):
+    height = bar.get_height()
+    plt.text(bar.get_x() + bar.get_width()/2., height + 1,
+             f'{value}%', ha='center', va='bottom', fontweight='bold')
+
+# Customize
+plt.xlabel('Programming Languages', fontweight='bold')
+plt.ylabel('Popularity (%)', fontweight='bold')
+plt.title('Programming Language Popularity Survey', fontsize=16, fontweight='bold')
+plt.ylim(0, 100)
+plt.grid(True, alpha=0.3, axis='y')
+
+# Add styling
+plt.gca().spines['top'].set_visible(False)
+plt.gca().spines['right'].set_visible(False)
+
+plt.tight_layout()
+plt.show()`
+            }
+        };
+
+        let currentChallenge = 'basic-line';
+
+        // Initialize practice page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeChallengeSelection();
+            loadChallenge(currentChallenge);
+        });
+
+        // Challenge selection functionality
+        function initializeChallengeSelection() {
+            const challengeCards = document.querySelectorAll('.challenge-card');
+            
+            challengeCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const challengeId = card.dataset.challenge;
+                    
+                    // Update active state
+                    challengeCards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    
+                    // Load challenge
+                    loadChallenge(challengeId);
+                    currentChallenge = challengeId;
+                });
+            });
+        }
+
+        // Load challenge content
+        function loadChallenge(challengeId) {
+            const challenge = challenges[challengeId];
+            if (!challenge) return;
+            
+            // Update header
+            document.getElementById('challenge-title').textContent = challenge.title;
+            document.getElementById('challenge-description').textContent = challenge.description;
+            
+            // Update difficulty badge
+            const difficultyBadge = document.querySelector('#challenge-title').parentElement.querySelector('.difficulty-badge');
+            difficultyBadge.className = `difficulty-badge difficulty-${challenge.difficulty}`;
+            difficultyBadge.textContent = challenge.difficulty.charAt(0).toUpperCase() + challenge.difficulty.slice(1);
+            
+            // Update hint
+            document.getElementById('hint-text').textContent = challenge.hint;
+            
+            // Update code input
+            document.getElementById('code-input').value = challenge.starterCode;
+            
+            // Update solution
+            document.getElementById('solution-code').innerHTML = `<pre><code class="language-python">${challenge.solution}</code></pre>`;
+            
+            // Reset UI
+            hideHint();
+            hideSolution();
+            resetOutput();
+        }
+
+        // Toggle hint
+        function toggleHint() {
+            const hintBox = document.getElementById('hint-box');
+            hintBox.classList.toggle('hidden');
+        }
+
+        // Hide hint
+        function hideHint() {
+            document.getElementById('hint-box').classList.add('hidden');
+        }
+
+        // Show solution
+        function showSolution() {
+            document.getElementById('solution-box').classList.remove('hidden');
+        }
+
+        // Hide solution
+        function hideSolution() {
+            document.getElementById('solution-box').classList.add('hidden');
+        }
+
+        // Reset code
+        function resetCode() {
+            const challenge = challenges[currentChallenge];
+            document.getElementById('code-input').value = challenge.starterCode;
+        }
+
+        // Reset output
+        function resetOutput() {
+            document.getElementById('challenge-output').innerHTML = `
+                <div class="text-center text-gray-500">
+                    <i class="fas fa-chart-line text-4xl mb-2"></i>
+                    <p>Click "Run Code" to see your output</p>
+                    <p class="text-sm mt-2">Your plot will appear here</p>
+                </div>
+            `;
+        }
+
+        // Run challenge code
+        function runChallengeCode() {
+            const code = document.getElementById('code-input').value;
+            const outputContainer = document.getElementById('challenge-output');
+            const runButton = document.getElementById('run-button');
+            
+            // Disable run button
+            runButton.disabled = true;
+            runButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Running...';
+            
+            // Show loading state
+            outputContainer.innerHTML = `
+                <div class="text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p class="text-blue-600">Executing your code...</p>
+                </div>
+            `;
+            
+            // Simulate code execution
+            setTimeout(() => {
+                try {
+                    // Create a simple chart based on the challenge
+                    createChallengeChart(currentChallenge);
+                    
+                    // Re-enable run button
+                    runButton.disabled = false;
+                    runButton.innerHTML = '<i class="fas fa-play mr-2"></i>Run Code';
+                    
+                } catch (error) {
+                    outputContainer.innerHTML = `
+                        <div class="text-center text-red-600">
+                            <i class="fas fa-exclamation-triangle text-4xl mb-2"></i>
+                            <p>Error executing code</p>
+                            <p class="text-sm mt-2">${error.message}</p>
+                        </div>
+                    `;
+                    
+                    runButton.disabled = false;
+                    runButton.innerHTML = '<i class="fas fa-play mr-2"></i>Run Code';
+                }
+            }, 2000);
+        }
+
+        // Create challenge chart
+        function createChallengeChart(challengeId) {
+            const outputContainer = document.getElementById('challenge-output');
+            
+            outputContainer.innerHTML = `
+                <div class="chart-container w-full h-full" data-chart="${challengeId}"></div>
+            `;
+            
+            const chartElement = outputContainer.querySelector('.chart-container');
+            const chart = echarts.init(chartElement);
+            
+            let option = {};
+            
+            switch(challengeId) {
+                case 'basic-line':
+                    const xData = [];
+                    const yData = [];
+                    for (let i = 0; i <= 100; i++) {
+                        const x = (i / 100) * 10;
+                        xData.push(x.toFixed(1));
+                        yData.push(x * x);
+                    }
+                    
+                    option = {
+                        grid: { left: '15%', right: '10%', top: '15%', bottom: '15%' },
+                        xAxis: { 
+                            type: 'category', 
+                            data: xData,
+                            name: 'x values',
+                            nameLocation: 'middle',
+                            nameGap: 30
+                        },
+                        yAxis: { 
+                            type: 'value',
+                            name: 'y values',
+                            nameLocation: 'middle',
+                            nameGap: 40
+                        },
+                        series: [{
+                            data: yData,
+                            type: 'line',
+                            smooth: true,
+                            lineStyle: { color: '#1f77b4', width: 3 },
+                            itemStyle: { color: '#1f77b4' }
+                        }],
+                        title: { text: 'Line Plot: y = x²', left: 'center' }
+                    };
+                    break;
+                    
+                case 'scatter-plot':
+                    const scatterData = [];
+                    for (let i = 0; i < 100; i++) {
+                        const x = Math.random() * 6 - 3;
+                        const y = 2 * x + (Math.random() - 0.5) * 2;
+                        scatterData.push([x, y]);
+                    }
+                    
+                    option = {
+                        grid: { left: '15%', right: '10%', top: '15%', bottom: '15%' },
+                        xAxis: { 
+                            type: 'value',
+                            name: 'X Values',
+                            nameLocation: 'middle',
+                            nameGap: 30
+                        },
+                        yAxis: { 
+                            type: 'value',
+                            name: 'Y Values',
+                            nameLocation: 'middle',
+                            nameGap: 40
+                        },
+                        series: [{
+                            data: scatterData,
+                            type: 'scatter',
+                            itemStyle: { color: '#1f77b4' },
+                            symbolSize: 8
+                        }],
+                        title: { text: 'Scatter Plot with Correlation', left: 'center' }
+                    };
+                    break;
+                    
+                default:
+                    option = {
+                        title: { text: 'Challenge Preview', left: 'center' }
+                    };
+            }
+            
+            chart.setOption(option);
+            
+            // Responsive resize
+            window.addEventListener('resize', () => {
+                chart.resize();
+            });
+        }
+
+        // Navigation functions
+        function previousChallenge() {
+            const challengeIds = Object.keys(challenges);
+            const currentIndex = challengeIds.indexOf(currentChallenge);
+            const prevIndex = currentIndex > 0 ? currentIndex - 1 : challengeIds.length - 1;
+            const prevChallenge = challengeIds[prevIndex];
+            
+            // Update active card
+            document.querySelector(`[data-challenge="${currentChallenge}"]`).classList.remove('active');
+            document.querySelector(`[data-challenge="${prevChallenge}"]`).classList.add('active');
+            
+            loadChallenge(prevChallenge);
+            currentChallenge = prevChallenge;
+        }
+
+        function nextChallenge() {
+            const challengeIds = Object.keys(challenges);
+            const currentIndex = challengeIds.indexOf(currentChallenge);
+            const nextIndex = currentIndex < challengeIds.length - 1 ? currentIndex + 1 : 0;
+            const nextChallenge = challengeIds[nextIndex];
+            
+            // Update active card
+            document.querySelector(`[data-challenge="${currentChallenge}"]`).classList.remove('active');
+            document.querySelector(`[data-challenge="${nextChallenge}"]`).classList.add('active');
+            
+            loadChallenge(nextChallenge);
+            currentChallenge = nextChallenge;
+        }
+
+        // Mark challenge complete
+        function markComplete() {
+            // Add success animation
+            const challengeCard = document.querySelector(`[data-challenge="${currentChallenge}"]`);
+            challengeCard.classList.add('success-animation');
+            
+            // Update status
+            const statusElement = challengeCard.querySelector('.fa-circle');
+            if (statusElement) {
+                statusElement.className = 'fas fa-check-circle text-green-600 mr-1';
+                statusElement.nextSibling.textContent = 'Completed';
+            }
+            
+            // Show success message
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-20 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            notification.innerHTML = '<i class="fas fa-check mr-2"></i>Challenge completed! Well done!';
+            document.body.appendChild(notification);
+            
+            anime({
+                targets: notification,
+                translateX: [300, 0],
+                opacity: [0, 1],
+                duration: 300,
+                easing: 'easeOutCubic'
+            });
+            
+            setTimeout(() => {
+                anime({
+                    targets: notification,
+                    translateX: 300,
+                    opacity: 0,
+                    duration: 300,
+                    easing: 'easeInCubic',
+                    complete: () => {
+                        document.body.removeChild(notification);
+                    }
+                });
+            }, 3000);
+            
+            // Remove animation class
+            setTimeout(() => {
+                challengeCard.classList.remove('success-animation');
+            }, 600);
+        }
+    </script>
+</body>
+</html>
